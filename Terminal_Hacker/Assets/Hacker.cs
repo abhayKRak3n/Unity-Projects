@@ -4,9 +4,10 @@ public class Hacker : MonoBehaviour
 {
     //init variables for class
     int level;
-    string[] level1Passwords = { "books", "aisle", "shelf", "password", "font", "borrow" };
-    string[] level2Passwords = { "prisoner", "handcuffs", "holster", "uniform", "arrest" };
-    string[] level3Passwords = { "starfield", "telescope", "environment", "exploration", "astronauts" };
+    int tries = 3;
+    string[] level1Passwords = { "radio", "station", "signal", "password", "broadcast", "borrow" };
+    string[] level2Passwords = { "books", "professor", "shelf", "password", "lecture", "borrow" };
+    string[] level3Passwords = { "data", "intelligence", "environment", "exploration", "corporate" };
     string password;
 
     enum Screen { MainMenu, Password, Win }  //3 states of the screen
@@ -68,10 +69,13 @@ public class Hacker : MonoBehaviour
     void startGame()
     {
         currentScreen = Screen.Password;
+        tries = 3;
         Terminal.ClearScreen();
         setRandomPassword();
-        Terminal.WriteLine("Logging in to servers....... \nConnection Established. \nPlease enter the password: \n(hint :" + password.Anagram() + ")");
-        Terminal.WriteLine("type menu to return to main menu or quit to leave the game");
+
+       Terminal.WriteLine("Logging in to servers....... \nConnection Established. \nPlease enter the password: \n(hint :" + password.Anagram() + ")");
+       Terminal.WriteLine("type menu to return to main menu \nor quit to leave the game");
+        Terminal.WriteLine("WARNING : program will reset to main \nmenu after all the attempts."); //unable to implement getch()
     }
 
     void setRandomPassword()
@@ -95,41 +99,37 @@ public class Hacker : MonoBehaviour
 
     public void checkPassword(string input)
     {
-        if (input == password)
+        
+         if (input == password)
+         {
+                winScreen();
+         }
+         else
+         {
+            tries--;
+            Terminal.WriteLine("Sorry, wrong password. Please try again");
+            Terminal.WriteLine("Attempts left: " + tries);
+         }
+
+        if (tries < 0)
         {
-            winScreen();
+            Terminal.WriteLine("Hacking failed, type menu to return to menu or quit to exit the game.");
+            if(input!="quit" || input != "menu")
+            {
+                showMainMenu();
+            }
+            showMainMenu();
         }
-        else
-        {
-            Terminal.WriteLine("Sorry, wrong password!");
-        }
+
     }
 
     public void winScreen()
     {
         currentScreen = Screen.Win;
         Terminal.ClearScreen();
-        Terminal.WriteLine("Congratulations, You can hack the world now.  \ntype menu to return to main menu or quit to quit the game");
+        Terminal.WriteLine("Congratulations, You can hack the world now.  \ntype menu to return to main menu \nor quit to quit the game");
     }
 
-    /*
-    public string ScrambleWord(string word)
-    {
-        StringBuilder jumbleSB = new StringBuilder();
-        Random rand = new Random();
-        jumbleSB.Append(theWord);
-        int lengthSB = jumbleSB.Length;
-        for (int i = 0; i < lengthSB; ++i)
-        {
-            int index1 = (rand.Next() % lengthSB);
-            int index2 = (rand.Next() % lengthSB);
-
-            Char temp = jumbleSB[index1];
-            jumbleSB[index1] = jumbleSB[index2];
-            jumbleSB[index2] = temp;
-
-        }
-    }*/
 }
 
 
